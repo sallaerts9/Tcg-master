@@ -63,6 +63,21 @@ style="display:none;width:100%;max-width:300px;margin-top:15px;border-radius:12p
 </div>
 <div class="panel">
 <h2>Kaart toevoegen</h2>
+  
+<div class="panel">
+  <h2>📸 TCG MASTER SCANNER</h2>
+  <button onclick="document.getElementById('scannerCamera').click()">
+    SCANNEN
+  </button>
+  <input
+    type="file"
+    id="scannerCamera"
+    accept="image/*"
+    capture="environment"
+    onchange="previewCard(event)"
+    style="display:none;"
+  >
+</div>
 <label>Kaartnaam</label>
 <input id="name" placeholder="Bijv. Charizard ex">
 
