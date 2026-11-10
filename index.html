@@ -222,11 +222,13 @@ async function previewCard(event) {
   nameInput.placeholder = "Kaartnaam wordt gezocht...";
 
   try {
-    const result = await Tesseract.recognize(file, "eng", {
+  const result = await Tesseract.recognize(file, "eng", {
+  
       logger: info => console.log(info)
     });
 
     const text = result.data.text;
+    alert("Gelezen tekst:\n" + text);
 
     const pokemonNames = [
       "Bulbasaur", "Ivysaur", "Venusaur",
