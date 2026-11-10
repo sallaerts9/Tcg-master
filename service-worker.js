@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "tcg-master-v3";
+const CACHE_NAME = "tcg-master-v4";
 
 const FILES_TO_CACHE = [
   "/Tcg-master/",
