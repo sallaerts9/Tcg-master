@@ -222,10 +222,33 @@ async function previewCard(event) {
   nameInput.placeholder = "Kaartnaam wordt gezocht...";
 
   try {
-  const result = await Tesseract.recognize(file, "eng", {
   
-      logger: info => console.log(info)
-    });
+const bitmap = await createImageBitmap(file);
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
+
+const cropX = bitmap.width * 0.10;
+const cropY = bitmap.height * 0.15;
+const cropWidth = bitmap.width * 0.80;
+const cropHeight = bitmap.height * 0.30;
+
+canvas.width = cropWidth * 2;
+canvas.height = cropHeight * 2;
+
+ctx.drawImage(
+  bitmap,
+  cropX, cropY, cropWidth, cropHeight,
+  0, 0, canvas.width, canvas.height
+);
+
+const croppedPhoto = await new Promise(resolve =>
+  canvas.toBlob(resolve, "image/png")
+);
+
+const result = await Tesseract.recognize(croppedPhoto, "eng", {
+  logger: info => console.log(info)
+});
+
 
     const text = result.data.text;
     alert("Gelezen tekst:\n" + text);
