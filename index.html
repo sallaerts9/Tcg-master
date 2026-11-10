@@ -37,6 +37,29 @@ small{color:#b8ad99}
 </div>
 </div>
 
+
+<div class="panel">
+<h2>📸 Kaart scannen</h2>
+<p>Maak een foto van je Pokémon-, Yu-Gi-Oh!- of Vanguard-kaart.</p>
+
+<input
+type="file"
+accept="image/*"
+capture="environment"
+onchange="
+if(this.files[0]){
+const preview=document.getElementById('scanPreview');
+preview.src=URL.createObjectURL(this.files[0]);
+preview.style.display='block';
+}
+">
+
+<img
+id="scanPreview"
+alt="Foto van je kaart"
+style="display:none;width:100%;max-width:300px;margin-top:15px;border-radius:12px;"
+>
+</div>
 <div class="panel">
 <h2>Kaart toevoegen</h2>
 <label>Kaartnaam</label>
@@ -161,6 +184,16 @@ collection.append(item);
 });
 }
 
+
+function previewCard(event) {
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  const preview = document.getElementById("cardPreview");
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = "block";
+}
 render();
 </script>
 
