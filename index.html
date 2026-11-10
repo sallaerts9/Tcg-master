@@ -208,7 +208,51 @@ collection.append(item);
 
 
 
+  
 async function previewCard(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const preview = document.getElementById("cardPreview");
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = "block";
+
+  const nameInput = document.getElementById("name");
+  nameInput.value = "";
+  nameInput.placeholder = "Kaartnaam wordt gezocht...";
+
+  try {
+    const result = await Tesseract.recognize(file, "eng", {
+      logger: info => console.log(info)
+    });
+
+    const text = result.data.text;
+
+    const pokemonNames = [
+      "Bulbasaur", "Ivysaur", "Venusaur",
+      "Charmander", "Charmeleon", "Charizard",
+      "Squirtle", "Wartortle", "Blastoise",
+      "Pikachu", "Raichu", "Mew", "Mewtwo",
+      "Eevee", "Jolteon", "Vaporeon", "Flareon"
+    ];
+
+    const foundName = pokemonNames.find(name =>
+      new RegExp("\\b" + name + "\\b", "i").test(text)
+    );
+
+    if (foundName) {
+      nameInput.value = foundName;
+      nameInput.placeholder = "Controleer de kaartnaam";
+    } else {
+      nameInput.placeholder = "Naam niet herkend";
+    }
+
+  } catch (error) {
+    nameInput.placeholder = "Herkenning mislukt";
+    console.error(error);
+  }
+}
+
   const file = event.target.files[0];
   if (!file) return;
 
