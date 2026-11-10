@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090909">
+<title>TCG MASTER</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#090909;color:#f7f0df;
+ font-family:Arial,sans-serif;padding:18px;
+}
+header{text-align:center;padding:20px}
+h1{color:#e1b653;letter-spacing:3px}
+h2{color:#e1b653}
+.panel{
+ background:#171717;border:1px solid #6d5429;
+ border-radius:15px;padding:16px;margin:14px 0;
+}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:#211c12;padding:15px;border-radius:12px}
+.stat strong{display:block;color:#e1b653;font-size:22px}
+input,select{
+ width:100%;padding:13px;margin:7px 0 14px;
+ background:#090909;color:white;border:1px solid #8a6c35;
+ border-radius:8px;font-size:16px
+}
+button{
+ background:#d5aa50;color:#16100a;border:0;
+ padding:12px 16px;border-radius:9px;
+ font-weight:bold;font-size:15px
+}
+.card{
+ display:flex;justify-content:space-between;gap:10px;
+ align-items:center;border-bottom:1px solid #49402f;
+ padding:12px 0
+}
+small{color:#b8ad99}
+.gold{color:#e1b653}
+</style>
+</head>
+<body>
+
+<header>
+ <h1>TCG MASTER</h1>
+ <small>YOUR COLLECTION. YOUR LEGACY.</small>
+</header>
+
+<div class="panel">
+ <h2>Mijn dashboard</h2>
+ <div class="stats">
+  <div class="stat">
+   <small>Aantal kaarten</small>
+   <strong id="count">0</strong>
+  </div>
+  <div class="stat">
+   <small>Collectiewaarde</small>
+   <strong id="total">€ 0,00</strong>
+  </div>
+ </div>
+</div>
+
+<div class="panel">
+ <h2>Kaart toevoegen</h2>
+
+ <label>Kaartnaam</label>
+ <input id="name" placeholder="Bijv. Charizard ex">
+
+ <label>Kaartspel</label>
+ <select id="game">
+  <option>Pokémon</option>
+  <option>Yu-Gi-Oh!</option>
+  <option>Cardfight!! Vanguard</option>
+  <option>Andere TCG</option>
+ </select>
+
+ <label>Aantal</label>
+ <input id="quantity" type="number" min="1" value="1">
+
+ <label>Waarde per kaart (€)</label>
+ <input id="price" type="number" min="0" step="0.01">
+
+ <label>Conditie</label>
+ <select id="condition">
+  <option>Near Mint</option>
+  <option>Excellent</option>
+  <option>Good</option>
+  <option>Played</option>
+  <option>Poor</option>
+ </select>
+
+ <button onclick="addCard()">+ Kaart bewaren</button>
+</div>
+
+<div class="panel">
+ <h2>Mijn collectie</h2>
+ <div id="collection"></div>
+</div>
+
+<script>
+let cards=JSON.parse(
+ localStorage.getItem("tcgmaster")||"[]"
+);
+
+function euro(value){
+ return new Intl.NumberFormat("nl-BE",{
+  style:"currency",currency:"EUR"
+ }).format(value);
+}
+
+function save(){
+ localStorage.setItem("tcgmaster",JSON.stringify(cards));
+ render();
+}
+
+function addCard(){
+ const name=document.getElementById("name").value.trim();
+ const quantity=Math.max(1,Number(document.getElementById("quantity").value)||1);
+ const price=Math.max(0,Number(document.getElementById("price").value)||0);
+
+ if(!name){
+  alert("Vul een kaartnaam in.");
+  return;
+ }
+
+ cards.push({
+  name:name,
+  game:document.getElementById("game").value,
+  quantity:quantity,
+  price:price,
+  condition:document.getElementById("condition").value
+ });
+
+ document.getElementById("name").value="";
+ document.getElementById("price").value="";
+ document.getElementById("quantity").value=1;
+
+ save();
+}
+
+function removeCard(index){
+ if(confirm("Kaart verwijderen?")){
+  cards.splice(index,1);
+  save();
+ }
+}
+
+function render(){
+ let count=0;
+ let total=0;
+
+ cards.forEach(card=>{
+  count+=card.quantity;
+  total+=card.quantity*card.price;
+ });
+
+ document.getElementById("count").textContent=count;
+ document.getElementById("total").textContent=euro(total);
+
+ const collection=document.getElementById("collection");
+
+ if(cards.length===0){
+  collection.innerHTML="<p><small>Je collectie is nog leeg.</small></p>";
+  return;
+ }
+
+ collection.innerHTML="";
+
+ cards.forEach((card,index)=>{
+  const item=document.createElement("div");
+  item.className="card";
+
+  const info=document.createElement("div");
+  const title=document.createElement("strong");
+  title.textContent=card.name;
+
+  const details=document.createElement("small");
+  details.textContent=card.game+" · "+card.condition+
+   " · Aantal: "+card.quantity;
+
+  const price=document.createElement("div");
+  price.className="gold";
+  price.textContent=euro(card.quantity*card.price);
+
+  info.append(title,document.createElement("br"),details,
+   document.createElement("br"),price);
+
+  const remove=document.createElement("button");
+  remove.textContent="Verwijder";
+  remove.onclick=()=>removeCard(index);
+
+  item.append(info,remove);
+  collection.append(item);
+ });
+}
+
+render();
+</script>
+
+</body>
+</html>
