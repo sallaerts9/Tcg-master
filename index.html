@@ -228,10 +228,10 @@ const bitmap = await createImageBitmap(file);
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
 
-const cropX = bitmap.width * 0.15;
-const cropY = bitmap.height * 0.20;
-const cropWidth = bitmap.width * 0.70;
-const cropHeight = bitmap.height * 0.12;
+const cropX = bitmap.width * 0.10;
+const cropY = bitmap.height * 0.12;
+const cropWidth = bitmap.width * 0.80;
+const cropHeight = bitmap.height * 0.22;
 
 canvas.width = cropWidth * 2;
 canvas.height = cropHeight * 2;
