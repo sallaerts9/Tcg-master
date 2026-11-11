@@ -254,17 +254,19 @@ const result = await Tesseract.recognize(croppedPhoto, "eng", {
     const text = result.data.text;
     alert("Gelezen tekst:\n" + text);
 
-    const pokemonNames = [
-      "Bulbasaur", "Ivysaur", "Venusaur",
-      "Charmander", "Charmeleon", "Charizard",
-      "Squirtle", "Wartortle", "Blastoise",
-      "Pikachu", "Raichu", "Mew", "Mewtwo",
-      "Eevee", "Jolteon", "Vaporeon", "Flareon"
-    ];
+    const pokemonNames = window.POKEMON_NAMES || [];
 
-    const foundName = pokemonNames.find(name =>
-      new RegExp("\\b" + name + "\\b", "i").test(text)
-    );
+    
+const cleanText = text.toLowerCase().replace(/[^a-z]/g, "");
+
+const foundName = pokemonNames.find(name => {
+  const cleanName = name.toLowerCase().replace(/[^a-z]/g, "");
+
+  return cleanText.includes(cleanName) ||
+    (cleanName.length > 5 &&
+     cleanText.includes(cleanName.slice(1)));
+});
+
 
     if (foundName) {
       nameInput.value = foundName;
